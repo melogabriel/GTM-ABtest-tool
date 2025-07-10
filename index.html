@@ -13,9 +13,7 @@
       const measurementId = document.getElementById("measurementId").value || "G-XXXXXXX";
       const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
 
-      const abScript = `
-<script>
-(function() {
+      const abScript = `(function() {
   function getCookie(name) {
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     return match ? match[2] : null;
@@ -45,8 +43,7 @@
     const el = document.querySelector("${selector}");
     if (el) el.style.display = "none";
   }
-})();
-</script>`;
+})();`;
 
       const containerJSON = {
         exportFormatVersion: 2,
