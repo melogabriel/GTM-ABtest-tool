@@ -69,9 +69,17 @@
               name: "GA4 Config with A/B Param",
               type: "gtag.config",
               parameter: [
-                { key: "send_page_view", value: "true" },
+                { key: "send_page_view", value: "false" },
                 { key: ga4Param, value: `{{AB Group (Cookie)}}` },
                 { key: "measurement_id", value: measurementId }
+              ],
+              firingTriggerId: ["214453"]
+            },
+            {
+              name: "GA4 page_view",
+              type: "gtag.js",
+              parameter: [
+                { key: "event_name", value: "page_view" }
               ],
               firingTriggerId: ["214453"]
             }
@@ -103,15 +111,73 @@
       link.click();
     }
   </script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 2rem;
+      max-width: 700px;
+      margin: auto;
+      background: #f9fafb;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-top: 0.25rem;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #1d4ed8;
+    }
+    .note {
+      font-size: 0.875rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+  </style>
 </head>
-<body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto">
-  <h1>GTM A/B Test JSON Generator</h1>
-  <label>Test Name<br><input id="testName" style="width:100%" placeholder="Rates Section Test" /></label><br><br>
-  <label>Cookie Name<br><input id="cookieName" style="width:100%" placeholder="ab_rates_group" /></label><br><br>
-  <label>Element Selector to Hide for B<br><input id="selector" style="width:100%" placeholder="#rates" /></label><br><br>
-  <label>GA4 Param Name<br><input id="ga4Param" style="width:100%" placeholder="ab_test_group" /></label><br><br>
-  <label>GA4 Measurement ID<br><input id="measurementId" style="width:100%" placeholder="G-XXXXXXX" /></label><br><br>
-  <label>Cookie Duration (days)<br><input id="cookieDays" type="number" style="width:100%" placeholder="30" /></label><br><br>
-  <button onclick="generateJSON()" style="padding: 0.5rem 1rem; font-size: 16px">Generate GTM JSON</button>
+<body>
+  <h1>GTM A/B Test Generator</h1>
+  <p>Generate a ready-to-import GTM container JSON for a simple A/B test.</p>
+  <label>Test Name
+    <input id="testName" placeholder="Rates Section Test" />
+  </label>
+  <label>Cookie Name
+    <input id="cookieName" placeholder="ab_rates_group" />
+  </label>
+  <label>Element Selector to Hide for Group B
+    <input id="selector" placeholder="#rates" />
+  </label>
+  <label>GA4 Parameter Name
+    <input id="ga4Param" placeholder="ab_test_group" />
+  </label>
+  <label>GA4 Measurement ID
+    <input id="measurementId" placeholder="G-XXXXXXX" />
+  </label>
+  <label>Cookie Duration (days)
+    <input id="cookieDays" type="number" placeholder="30" />
+  </label>
+  <button onclick="generateJSON()">Download GTM Container JSON</button>
+  <p class="note">This tool assumes you'll import the file into GTM and verify your GA4 tag uses the matching cookie variable.</p>
 </body>
 </html>
