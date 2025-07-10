@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GTM A/B Test Generator</title>
+  <script>
+    function generateJSON() {
+      const testName = document.getElementById("testName").value || "AB Test";
+      const cookieName = document.getElementById("cookieName").value || "ab_group";
+      const selector = document.getElementById("selector").value || "#rates";
+      const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
+      const measurementId = document.getElementById("measurementId").value || "G-XXXXXXX";
+      const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
+
+      const abScript = `
+<script>
+(function() {
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+  }
+
+  function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+  }
+
+  const name = "${cookieName}";
+  let group = getCookie(name);
+  if (!group) {
+    group = (Math.random() < 0.5) ? "A" : "B";
+    setCookie(name, group, ${cookieDays});
+  }
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ event: "ab_group_set", ab_group: group });
+
+  if (group === "B") {
+    const el = document.querySelector("${selector}");
+    if (el) el.style.display = "none";
+  }
+})();
+</script>`;
+
+      const containerJSON = {
+        exportFormatVersion: 2,
+        containerVersion: {
+          container: {
+            publicId: "GTM-XXXXXXX",
+            name: `A/B Test: ${testName}`
+          },
+          tag: [
+            {
+              name: "Set A/B Group Cookie",
+              type: "html",
+              parameter: [
+                { key: "html", value: abScript }
+              ],
+              firingTriggerId: ["214453"],
+              tagFiringOption: "ONCE_PER_EVENT"
+            },
+            {
+              name: "GA4 Config with A/B Param",
+              type: "gtag.config",
+              parameter: [
+                { key: "send_page_view", value: "true" },
+                { key: ga4Param, value: `{{AB Group (Cookie)}}` },
+                { key: "measurement_id", value: measurementId }
+              ],
+              firingTriggerId: ["214453"]
+            }
+          ],
+          trigger: [
+            {
+              triggerId: "214453",
+              type: "PAGEVIEW",
+              name: "All Pages"
+            }
+          ],
+          variable: [
+            {
+              name: "AB Group (Cookie)",
+              type: "1st Party Cookie",
+              parameter: [
+                { key: "name", value: cookieName }
+              ]
+            }
+          ]
+        }
+      };
+
+      const blob = new Blob([JSON.stringify(containerJSON, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
+      link.click();
+    }
+  </script>
+</head>
+<body style="font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto">
+  <h1>GTM A/B Test JSON Generator</h1>
+  <label>Test Name<br><input id="testName" style="width:100%" placeholder="Rates Section Test" /></label><br><br>
+  <label>Cookie Name<br><input id="cookieName" style="width:100%" placeholder="ab_rates_group" /></label><br><br>
+  <label>Element Selector to Hide for B<br><input id="selector" style="width:100%" placeholder="#rates" /></label><br><br>
+  <label>GA4 Param Name<br><input id="ga4Param" style="width:100%" placeholder="ab_test_group" /></label><br><br>
+  <label>GA4 Measurement ID<br><input id="measurementId" style="width:100%" placeholder="G-XXXXXXX" /></label><br><br>
+  <label>Cookie Duration (days)<br><input id="cookieDays" type="number" style="width:100%" placeholder="30" /></label><br><br>
+  <button onclick="generateJSON()" style="padding: 0.5rem 1rem; font-size: 16px">Generate GTM JSON</button>
+</body>
+</html>
