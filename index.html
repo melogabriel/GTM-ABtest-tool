@@ -57,7 +57,7 @@
               name: "Set A/B Group Cookie",
               type: "html",
               parameter: [
-                { key: "html", value: abScript }
+                { key: "html", type: "TEMPLATE", value: abScript }
               ],
               firingTriggerId: ["214453"],
               tagFiringOption: "ONCE_PER_EVENT"
@@ -66,9 +66,9 @@
               name: "GA4 Config with A/B Param",
               type: "gtag.config",
               parameter: [
-                { key: "send_page_view", value: "false" },
-                { key: ga4Param, value: `{{AB Group (Cookie)}}` },
-                { key: "measurement_id", value: measurementId }
+                { key: "send_page_view", type: "BOOLEAN", value: "false" },
+                { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` },
+                { key: "measurement_id", type: "TEMPLATE", value: measurementId }
               ],
               firingTriggerId: ["214453"]
             },
@@ -76,7 +76,7 @@
               name: "GA4 page_view",
               type: "gtag.js",
               parameter: [
-                { key: "event_name", value: "page_view" }
+                { key: "event_name", type: "TEMPLATE", value: "page_view" }
               ],
               firingTriggerId: ["214453"]
             }
@@ -93,7 +93,7 @@
               name: "AB Group (Cookie)",
               type: "1st Party Cookie",
               parameter: [
-                { key: "name", value: cookieName }
+                { key: "name", type: "TEMPLATE", value: cookieName }
               ]
             }
           ]
