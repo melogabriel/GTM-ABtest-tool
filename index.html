@@ -64,19 +64,20 @@
             },
             {
               name: "GA4 Config with A/B Param",
-              type: "gtag.config",
+              type: "gaawe",
               parameter: [
                 { key: "send_page_view", type: "BOOLEAN", value: "false" },
-                { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` },
-                { key: "measurement_id", type: "TEMPLATE", value: measurementId }
+                { key: "measurement_id", type: "TEMPLATE", value: measurementId },
+                { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
               ],
               firingTriggerId: ["214453"]
             },
             {
-              name: "GA4 page_view",
-              type: "gtag.js",
+              name: "GA4 Event - page_view",
+              type: "gaawc",
               parameter: [
-                { key: "event_name", type: "TEMPLATE", value: "page_view" }
+                { key: "event_name", type: "TEMPLATE", value: "page_view" },
+                { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
               ],
               firingTriggerId: ["214453"]
             }
@@ -175,6 +176,6 @@
     <input id="cookieDays" type="number" placeholder="30" />
   </label>
   <button onclick="generateJSON()">Download GTM Container JSON</button>
-  <p class="note">This tool assumes you'll import the file into GTM and verify your GA4 tag uses the matching cookie variable.</p>
+  <p class="note">This tool generates a full GTM container (.json) that you can import via Admin → Import Container. Make sure your GA4 tags use the same custom dimension as defined above.</p>
 </body>
 </html>
