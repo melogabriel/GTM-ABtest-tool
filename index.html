@@ -7,7 +7,7 @@
   <script>
     function generateJSON() {
       const testName = document.getElementById("testName").value || "AB Test";
-      const cookieName = document.getElementById("cookieName").value || "ab_group";
+      const cookieName = document.getElementById("cookieName").value || "ab_test_group";
       const selector = document.getElementById("selector").value || "#rates";
       const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
       const measurementId = document.getElementById("measurementId").value || "G-XXXXXXX";
@@ -80,7 +80,19 @@
               type: "gaawc",
               parameter: [
                 { key: "event_name", type: "TEMPLATE", value: "page_view" },
-                { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
+                {
+                  key: "eventParameter",
+                  type: "LIST",
+                  list: [
+                    {
+                      type: "MAP",
+                      map: [
+                        { key: "name", type: "TEMPLATE", value: ga4Param },
+                        { key: "value", type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
+                      ]
+                    }
+                  ]
+                }
               ],
               firingTriggerId: ["214453"]
             }
@@ -89,13 +101,14 @@
             {
               triggerId: "214453",
               type: "PAGEVIEW",
-              name: "All Pages"
+              name: "All Pages",
+              filter: []
             }
           ],
           variable: [
             {
               name: "AB Group (Cookie)",
-              type: "1st Party Cookie",
+              type: "kvar",
               parameter: [
                 { key: "name", type: "TEMPLATE", value: cookieName }
               ]
@@ -164,7 +177,7 @@
     <input id="testName" placeholder="Rates Section Test" />
   </label>
   <label>Cookie Name
-    <input id="cookieName" placeholder="ab_rates_group" />
+    <input id="cookieName" placeholder="ab_test_group" />
   </label>
   <label>Element Selector to Hide for Group B
     <input id="selector" placeholder="#rates" />
