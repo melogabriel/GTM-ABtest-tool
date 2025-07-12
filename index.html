@@ -10,8 +10,13 @@
       const cookieName = document.getElementById("cookieName").value || "ab_test_group";
       const selector = document.getElementById("selector").value || "#rates";
       const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
-      const measurementId = document.getElementById("measurementId").value || "G-XXXXXXX";
+      const measurementId = document.getElementById("measurementId").value.trim();
       const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
+
+      if (!/^G-[A-Z0-9]{4,}$/.test(measurementId)) {
+        alert("Please enter a valid GA4 Measurement ID (e.g., G-ABCD1234)");
+        return;
+      }
 
       const abScript = `(function() {
   function getCookie(name) {
