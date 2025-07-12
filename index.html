@@ -71,7 +71,13 @@
                 { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
               ],
               vendorTemplate: {
-                measurementIdOverride: measurementId
+                parameter: [
+                  {
+                    key: "measurementIdOverride",
+                    type: "TEMPLATE",
+                    value: measurementId
+                  }
+                ]
               },
               firingTriggerId: ["214453"]
             },
