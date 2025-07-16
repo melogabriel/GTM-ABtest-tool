@@ -69,7 +69,6 @@
               firingTriggerId: [internalTriggerId],
               tagFiringOption: "ONCE_PER_LOAD"
             },
-            // CORRECTED GOOGLE TAG
             {
               name: `A/B Test - GA4 Tag - ${testName}`,
               type: "gaawe",
@@ -90,7 +89,6 @@
                   ]
                 }
               ],
-              // This block is required by the GTM import schema.
               vendorTemplate: {
                 parameter: [
                   {
@@ -107,7 +105,8 @@
             {
               name: "All Pages",
               type: "PAGEVIEW",
-              triggerId: internalTriggerId
+              triggerId: internalTriggerId,
+              customEventFilter: [] // ADDED THIS REQUIRED PROPERTY
             }
           ],
           variable: [
@@ -116,7 +115,8 @@
               type: "kvar",
               parameter: [
                 { key: "name", type: "TEMPLATE", value: cookieName }
-              ]
+              ],
+              formatValue: false // ADDED THIS REQUIRED PROPERTY
             }
           ]
         }
