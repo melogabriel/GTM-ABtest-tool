@@ -13,8 +13,8 @@
       const measurementId = document.getElementById("measurementId").value.trim();
       const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
 
-      if (!/^G-[A-Z0-9]{4,}$/.test(measurementId)) {
-        alert("Please enter a valid GA4 Measurement ID (e.g., G-ABCD1234)");
+      if (!/^G-[A-Z0-9]{10}$/.test(measurementId)) {
+        alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
         return;
       }
 
@@ -50,76 +50,65 @@
   }
 })();`;
 
+      // A consistent but non-conflicting ID for internal reference within the JSON file.
+      const internalTriggerId = "1";
+
       const containerJSON = {
         exportFormatVersion: 2,
         containerVersion: {
           container: {
-            publicId: "GTM-XXXXXXX",
-            name: `A/B Test: ${testName}`
+            publicId: "GTM-XXXXXXX", // This is a placeholder, GTM replaces it.
+            name: `A/B Test - ${testName}`
           },
           tag: [
+            // Tag 1: Custom HTML to set the cookie and hide the element.
             {
-              name: "Set A/B Group Cookie",
+              name: `A/B Test - Script - ${testName}`,
               type: "html",
               parameter: [
                 { key: "html", type: "TEMPLATE", value: abScript }
               ],
-              firingTriggerId: ["214453"],
-              tagFiringOption: "ONCE_PER_EVENT"
+              firingTriggerId: [internalTriggerId],
+              tagFiringOption: "ONCE_PER_PAGE"
             },
+            // Tag 2: A single, standard Google Tag.
             {
-              name: "GA4 Config with A/B Param",
-              type: "gaawe",
+              name: `A/B Test - GA4 Tag - ${testName}`,
+              type: "gaawe", // This is the 'Google Tag' type
               parameter: [
-                { key: "send_page_view", type: "BOOLEAN", value: "false" },
                 { key: "measurement_id", type: "TEMPLATE", value: measurementId },
-                { key: ga4Param, type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
-              ],
-              vendorTemplate: {
-                parameter: [
-                  {
-                    key: "measurementIdOverride",
-                    type: "TEMPLATE",
-                    value: measurementId
-                  }
-                ]
-              },
-              firingTriggerId: ["214453"]
-            },
-            {
-              name: "GA4 Event - page_view",
-              type: "gaawc",
-              parameter: [
-                { key: "event_name", type: "TEMPLATE", value: "page_view" },
+                { key: "send_page_view", type: "BOOLEAN", value: "true" },
+                // Correctly set the A/B group as a User Property.
                 {
-                  key: "eventParameter",
+                  key: "userProperties",
                   type: "LIST",
                   list: [
                     {
                       type: "MAP",
                       map: [
-                        { key: "name", type: "TEMPLATE", value: ga4Param },
-                        { key: "value", type: "TEMPLATE", value: `{{AB Group (Cookie)}}` }
+                        { key: "name", "type": "TEMPLATE", value: ga4Param },
+                        { key: "value", "type": "TEMPLATE", value: `{{A/B Test Group - ${testName}}}` }
                       ]
                     }
                   ]
                 }
               ],
-              firingTriggerId: ["214453"]
+              firingTriggerId: [internalTriggerId]
             }
           ],
           trigger: [
             {
-              triggerId: "214453",
-              type: "PAGEVIEW",
+              // The trigger that the tags above will use.
               name: "All Pages",
-              filter: []
+              type: "PAGEVIEW",
+              triggerId: internalTriggerId
             }
           ],
           variable: [
             {
-              name: "AB Group (Cookie)",
-              type: "kvar",
+              // The variable that reads the cookie value.
+              name: `A/B Test Group - ${testName}`,
+              type: "kvar", // This is the '1st Party Cookie' variable type.
               parameter: [
                 { key: "name", type: "TEMPLATE", value: cookieName }
               ]
@@ -134,6 +123,7 @@
       link.href = url;
       link.download = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
       link.click();
+      URL.revokeObjectURL(url); // Clean up the object URL.
     }
   </script>
   <style>
@@ -177,13 +167,14 @@
     .note {
       font-size: 0.875rem;
       color: #555;
-      margin-top: 0.5rem;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
   <h1>GTM A/B Test Generator</h1>
   <p>Generate a ready-to-import GTM container JSON for a simple A/B test.</p>
+
   <label>Test Name
     <input id="testName" placeholder="Rates Section Test" />
   </label>
@@ -193,16 +184,17 @@
   <label>Element Selector to Hide for Group B
     <input id="selector" placeholder="#rates" />
   </label>
-  <label>GA4 Parameter Name
+  <label>GA4 Parameter Name (User Property)
     <input id="ga4Param" placeholder="ab_test_group" />
   </label>
   <label>GA4 Measurement ID
-    <input id="measurementId" placeholder="G-XXXXXXX" />
+    <input id="measurementId" placeholder="G-XXXXXXXXXX" />
   </label>
   <label>Cookie Duration (days)
     <input id="cookieDays" type="number" placeholder="30" />
   </label>
   <button onclick="generateJSON()">Download GTM Container JSON</button>
-  <p class="note">This tool generates a full GTM container (.json) that you can import via Admin → Import Container. Make sure your GA4 tags use the same custom dimension as defined above.</p>
+
+  <p class="note">This tool generates a full GTM container (.json) that you can import via <strong>Admin → Import Container</strong>. The import will add a new tag, trigger, and variable to your workspace, prefixed with "A/B Test -". Review the imported items before publishing.</p>
 </body>
 </html>
