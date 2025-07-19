@@ -60,35 +60,35 @@
       const internalTriggerId = "1";
 
       const containerJSON = {
-        exportFormatVersion: 2,
-        containerVersion: {
-          accountId: placeholderAccountId,
-          containerId: placeholderContainerId,
-          fingerprint: placeholderFingerprint,
-          container: {
-            accountId: placeholderAccountId,
-            containerId: placeholderContainerId,
-            publicId: "GTM-XXXXXXX",
-            name: testName
+        "exportFormatVersion": 2,
+        "containerVersion": {
+          "accountId": placeholderAccountId,
+          "containerId": placeholderContainerId,
+          "fingerprint": placeholderFingerprint,
+          "container": {
+            "accountId": placeholderAccountId,
+            "containerId": placeholderContainerId,
+            "publicId": "GTM-XXXXXXX",
+            "name": testName
           },
-          tag: [
+          "tag": [
             {
-              accountId: placeholderAccountId,
-              containerId: placeholderContainerId,
-              name: `A/B - Script - ${testName}`,
-              type: "html",
-              parameter: [
+              "accountId": placeholderAccountId,
+              "containerId": placeholderContainerId,
+              "name": `A/B - Script - ${testName}`,
+              "type": "html",
+              "parameter": [
                 { "key": "html", "type": "TEMPLATE", "value": abScript }
               ],
-              firingTriggerId: [ internalTriggerId ],
-              tagFiringOption: "ONCE_PER_LOAD"
+              "firingTriggerId": [ internalTriggerId ],
+              "tagFiringOption": "ONCE_PER_LOAD"
             },
             {
-              accountId: placeholderAccountId,
-              containerId: placeholderContainerId,
-              name: `A/B - GA4 Event - ${testName}`,
-              type: "gaawc",
-              parameter: [
+              "accountId": placeholderAccountId,
+              "containerId": placeholderContainerId,
+              "name": `A/B - GA4 Event - ${testName}`,
+              "type": "gaawc",
+              "parameter": [
                 { "key": "eventName", "type": "TEMPLATE", "value": "page_view" },
                 { "key": "measurementId", "type": "TEMPLATE", "value": measurementId },
                 {
@@ -105,26 +105,26 @@
                   ]
                 }
               ],
-              firingTriggerId": [ internalTriggerId ]
+              "firingTriggerId": [ internalTriggerId ]
             }
           ],
-          trigger: [
+          "trigger": [
             {
-              accountId: placeholderAccountId,
-              containerId: placeholderContainerId,
-              name: "All Pages",
-              type: "PAGEVIEW",
-              triggerId: internalTriggerId,
-              customEventFilter": []
+              "accountId": placeholderAccountId,
+              "containerId": placeholderContainerId,
+              "name": "All Pages",
+              "type": "PAGEVIEW",
+              "triggerId": internalTriggerId,
+              "customEventFilter": []
             }
           ],
-          variable: [
+          "variable": [
             {
-              accountId: placeholderAccountId,
-              containerId: placeholderContainerId,
-              name: `A/B - Group Variable - ${testName}`,
-              type: "k",
-              parameter: [
+              "accountId": placeholderAccountId,
+              "containerId": placeholderContainerId,
+              "name": `A/B - Group Variable - ${testName}`,
+              "type": "k",
+              "parameter": [
                 { "key": "name", "type": "TEMPLATE", "value": cookieName }
               ]
             }
