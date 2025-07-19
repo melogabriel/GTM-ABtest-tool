@@ -106,7 +106,7 @@
               name: "All Pages",
               type: "PAGEVIEW",
               triggerId: internalTriggerId,
-              customEventFilter: [] // ADDED THIS REQUIRED PROPERTY
+              customEventFilter: []
             }
           ],
           variable: [
@@ -115,8 +115,8 @@
               type: "kvar",
               parameter: [
                 { key: "name", type: "TEMPLATE", value: cookieName }
-              ],
-              formatValue: false // ADDED THIS REQUIRED PROPERTY
+              ]
+              // The "formatValue: false" line has been removed from here.
             }
           ]
         }
