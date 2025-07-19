@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GTM A/B Test Generator - V2</title>
+  <title>GTM A/B Test Generator</title>
   <script>
     function generateJSON() {
+      // Get all the values from the form
       const testName = document.getElementById("testName").value || "AB Test";
       const cookieName = document.getElementById("cookieName").value || "ab_test_group";
       const selector = document.getElementById("selector").value || "#rates";
@@ -13,10 +14,19 @@
       const measurementId = document.getElementById("measurementId").value.trim();
       const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
 
+      // --- MODIFIED VALIDATION BLOCK ---
+      console.log(`User clicked generate. Checking Measurement ID: "${measurementId}"`);
+
       if (!/^G-[A-Z0-9]{10}$/.test(measurementId)) {
-        alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
-        return;
+        // This block runs if validation FAILS
+        console.error("Validation FAILED. Stopping file generation.");
+        alert(`The Measurement ID you entered ("${measurementId}") is not valid.\n\nPlease use the format G-XXXXXXXXXX.`);
+        return; // Stop the function
+      } else {
+        // This block runs if validation PASSES
+        console.log("Validation PASSED. Proceeding with file generation.");
       }
+      // --- END OF MODIFIED BLOCK ---
 
       const abScript = `(function() {
   function getCookie(name) {
@@ -51,74 +61,16 @@
 })();`;
 
       const internalTriggerId = "1";
-
       const containerJSON = {
         exportFormatVersion: 2,
         containerVersion: {
-          container: {
-            publicId: "GTM-XXXXXXX",
-            name: `A/B Test - ${testName}`
-          },
+          container: { publicId: "GTM-XXXXXXX", name: `A/B Test - ${testName}` },
           tag: [
-            {
-              name: `A/B Test - Script - ${testName}`,
-              type: "html",
-              parameter: [
-                { key: "html", type: "TEMPLATE", value: abScript }
-              ],
-              firingTriggerId: [internalTriggerId],
-              tagFiringOption: "ONCE_PER_LOAD"
-            },
-            {
-              name: `A/B Test - GA4 Tag - ${testName}`,
-              type: "gaawe",
-              parameter: [
-                { key: "measurement_id", type: "TEMPLATE", value: measurementId },
-                { key: "send_page_view", type: "BOOLEAN", value: "true" },
-                {
-                  key: "userProperties",
-                  type: "LIST",
-                  list: [
-                    {
-                      type: "MAP",
-                      map: [
-                        { key: "name", "type": "TEMPLATE", value: ga4Param },
-                        { key: "value", "type": "TEMPLATE", value: `{{A/B Test Group - ${testName}}}` }
-                      ]
-                    }
-                  ]
-                }
-              ],
-              vendorTemplate: {
-                parameter: [
-                  {
-                    key: "measurementIdOverride",
-                    type: "TEMPLATE",
-                    value: measurementId
-                  }
-                ]
-              },
-              firingTriggerId: [internalTriggerId]
-            }
+            { name: `A/B Test - Script - ${testName}`, type: "html", parameter: [{ key: "html", type: "TEMPLATE", value: abScript }], firingTriggerId: [internalTriggerId], tagFiringOption: "ONCE_PER_LOAD" },
+            { name: `A/B Test - GA4 Tag - ${testName}`, type: "gaawe", parameter: [{ key: "measurement_id", type: "TEMPLATE", value: measurementId }, { key: "send_page_view", type: "BOOLEAN", value: "true" }, { key: "userProperties", type: "LIST", list: [{ type: "MAP", map: [{ key: "name", "type": "TEMPLATE", value: ga4Param }, { key: "value", "type": "TEMPLATE", value: `{{A/B Test Group - ${testName}}}` }] }] }], vendorTemplate: { parameter: [{ key: "measurementIdOverride", type: "TEMPLATE", value: measurementId }] }, firingTriggerId: [internalTriggerId] }
           ],
-          trigger: [
-            {
-              name: "All Pages",
-              type: "PAGEVIEW",
-              triggerId: internalTriggerId,
-              customEventFilter: []
-            }
-          ],
-          variable: [
-            {
-              name: `A/B Test Group - ${testName}`,
-              type: "kvar",
-              parameter: [
-                { key: "name", type: "TEMPLATE", value: cookieName }
-              ]
-              // The "formatValue: false" line has been removed from here.
-            }
-          ]
+          trigger: [{ name: "All Pages", type: "PAGEVIEW", triggerId: internalTriggerId, customEventFilter: [] }],
+          variable: [{ name: `A/B Test Group - ${testName}`, type: "kvar", parameter: [{ key: "name", type: "TEMPLATE", value: cookieName }] }]
         }
       };
 
@@ -132,72 +84,25 @@
     }
   </script>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 2rem;
-      max-width: 700px;
-      margin: auto;
-      background: #f9fafb;
-      color: #333;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      margin-bottom: 1rem;
-    }
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-top: 0.25rem;
-    }
-    button {
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      background: #2563eb;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #1d4ed8;
-    }
-    .note {
-      font-size: 0.875rem;
-      color: #555;
-      margin-top: 1rem;
-    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 2rem; max-width: 700px; margin: auto; background: #f9fafb; color: #333; }
+    h1 { font-size: 2rem; margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 1rem; }
+    input { width: 100%; padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; margin-top: 0.25rem; }
+    button { padding: 0.75rem 1.5rem; font-size: 1rem; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; }
+    button:hover { background: #1d4ed8; }
+    .note { font-size: 0.875rem; color: #555; margin-top: 1rem; }
   </style>
 </head>
 <body>
   <h1>GTM A/B Test Generator - V2</h1>
   <p>Generate a ready-to-import GTM container JSON for a simple A/B test.</p>
 
-  <label>Test Name
-    <input id="testName" placeholder="Rates Section Test" />
-  </label>
-  <label>Cookie Name
-    <input id="cookieName" placeholder="ab_test_group" />
-  </label>
-  <label>Element Selector to Hide for Group B
-    <input id="selector" placeholder="#rates" />
-  </label>
-  <label>GA4 Parameter Name (User Property)
-    <input id="ga4Param" placeholder="ab_test_group" />
-  </label>
-  <label>GA4 Measurement ID
-    <input id="measurementId" placeholder="G-XXXXXXXXXX" />
-  </label>
-  <label>Cookie Duration (days)
-    <input id="cookieDays" type="number" placeholder="30" />
-  </label>
+  <label>Test Name <input id="testName" placeholder="Rates Section Test" /></label>
+  <label>Cookie Name <input id="cookieName" placeholder="ab_test_group" /></label>
+  <label>Element Selector to Hide for Group B <input id="selector" placeholder="#rates" /></label>
+  <label>GA4 Parameter Name (User Property) <input id="ga4Param" placeholder="ab_test_group" /></label>
+  <label>GA4 Measurement ID <input id="measurementId" placeholder="G-XXXXXXXXXX" /></label>
+  <label>Cookie Duration (days) <input id="cookieDays" type="number" placeholder="30" /></label>
   <button onclick="generateJSON()">Download GTM Container JSON</button>
 
   <p class="note">This tool generates a full GTM container (.json) that you can import via <strong>Admin → Import Container</strong>. The import will add a new tag, trigger, and variable to your workspace, prefixed with "A/B Test -". Review the imported items before publishing.</p>
