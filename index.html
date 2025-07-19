@@ -7,18 +7,20 @@
   <script>
     function generateJSON() {
       // Get all the values from the form
-      const testName = document.getElementById("testName").value || "AB Test";
+      const testName = document.getElementById("testName").value || "A/B Test";
       const cookieName = document.getElementById("cookieName").value || "ab_test_group";
       const selector = document.getElementById("selector").value || "#rates";
       const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
       const measurementId = document.getElementById("measurementId").value.trim();
       const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
 
+      // Validation check
       if (!/^G-[A-Z0-9]{10}$/.test(measurementId)) {
         alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
         return;
       }
 
+      // The A/B testing script that runs on the page
       const abScript = `(function() {
   function getCookie(name) {
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -51,7 +53,7 @@
   }
 })();`;
 
-      // Placeholder IDs and Fingerprint are required by the import schema
+      // Placeholder metadata required by the GTM import schema
       const placeholderAccountId = "12345678";
       const placeholderContainerId = "123456";
       const placeholderFingerprint = "1";
@@ -60,91 +62,71 @@
       const containerJSON = {
         exportFormatVersion: 2,
         containerVersion: {
-          // --- ADDED METADATA ---
           accountId: placeholderAccountId,
           containerId: placeholderContainerId,
           fingerprint: placeholderFingerprint,
-          // --- END ---
           container: {
-            // --- ADDED METADATA ---
             accountId: placeholderAccountId,
             containerId: placeholderContainerId,
-            // --- END ---
             publicId: "GTM-XXXXXXX",
-            name: `A/B Test - ${testName}`
+            name: testName
           },
           tag: [
             {
-              // --- ADDED METADATA ---
               accountId: placeholderAccountId,
               containerId: placeholderContainerId,
-              // --- END ---
-              name: `A/B Test - Script - ${testName}`,
+              name: `A/B - Script - ${testName}`,
               type: "html",
-              parameter: [{ key: "html", type: "TEMPLATE", value: abScript }],
-              firingTriggerId: [internalTriggerId],
-              tagFiringOption: "ONCE_PER_LOAD"
-            },
-            {
-              // --- CORRECTED GA4 TAG STRUCTURE (PART 1: CONFIG TAG) ---
-              // This tag just loads the GA4 library. It does not send the page_view.
-              accountId: placeholderAccountId,
-              containerId: placeholderContainerId,
-              name: `A/B Test - GA4 Config - ${testName}`,
-              type: "gaawe",
               parameter: [
-                { key: "measurement_id", type: "TEMPLATE", value: measurementId },
-                { key: "send_page_view", type: "BOOLEAN", value: "false" } 
+                { "key": "html", "type": "TEMPLATE", "value": abScript }
               ],
-              firingTriggerId: [internalTriggerId]
+              firingTriggerId": [ internalTriggerId ],
+              tagFiringOption": "ONCE_PER_LOAD"
             },
             {
-              // --- CORRECTED GA4 TAG STRUCTURE (PART 2: EVENT TAG) ---
-              // This tag sends the page_view and the user property.
               accountId: placeholderAccountId,
               containerId: placeholderContainerId,
-              name: `A/B Test - GA4 Event (page_view) - ${testName}`,
-              type: "gaawc", // GA4 Event Tag Type
+              name: `A/B - GA4 Event - ${testName}`,
+              type: "gaawc",
               parameter: [
-                { key: "eventName", type: "TEMPLATE", value: "page_view" },
-                { key: "configTag", type: "TEMPLATE", value: `{{A/B Test - GA4 Config - ${testName}}}`},
-                // User properties are correctly set here, as part of an event
-                { 
-                  key: "userProperties",
-                  type: "LIST",
-                  list: [{
-                    type: "MAP",
-                    map: [
-                      { key: "name", "type": "TEMPLATE", value: ga4Param },
-                      { key: "value", "type": "TEMPLATE", value: `{{A/B Test Group - ${testName}}}` }
-                    ]
-                  }]
+                { "key": "eventName", "type": "TEMPLATE", "value": "page_view" },
+                { "key": "measurementId", "type": "TEMPLATE", "value": measurementId },
+                {
+                  "key": "eventParameter",
+                  "type": "LIST",
+                  "list": [
+                    {
+                      "type": "MAP",
+                      "map": [
+                        { "key": "name", "type": "TEMPLATE", "value": ga4Param },
+                        { "key": "value", "type": "TEMPLATE", "value": `{{A/B - Group Variable - ${testName}}}` }
+                      ]
+                    }
+                  ]
                 }
               ],
-              firingTriggerId: [internalTriggerId]
+              firingTriggerId": [ internalTriggerId ]
             }
           ],
           trigger: [
             {
-              // --- ADDED METADATA ---
               accountId: placeholderAccountId,
               containerId: placeholderContainerId,
-              // --- END ---
               name: "All Pages",
               type: "PAGEVIEW",
               triggerId: internalTriggerId,
-              customEventFilter: []
+              customEventFilter": []
             }
           ],
           variable: [
             {
-              // --- ADDED METADATA ---
               accountId: placeholderAccountId,
               containerId: placeholderContainerId,
-              // --- END ---
-              name: `A/B Test Group - ${testName}`,
-              type: "kvar",
-              parameter: [{ key: "name", type: "TEMPLATE", value: cookieName }]
+              name: `A/B - Group Variable - ${testName}`,
+              type: "k", // Correct type for 1st Party Cookie
+              parameter": [
+                { "key": "name", "type": "TEMPLATE", "value": cookieName }
+              ]
             }
           ]
         }
@@ -172,15 +154,27 @@
 <body>
   <h1>GTM A/B Test Generator</h1>
   <p>Generate a ready-to-import GTM container JSON for a simple A/B test.</p>
-
-  <label>Test Name <input id="testName" placeholder="Rates Section Test" /></label>
-  <label>Cookie Name <input id="cookieName" placeholder="ab_test_group" /></label>
-  <label>Element Selector to Hide for Group B <input id="selector" placeholder="#rates" /></label>
-  <label>GA4 Parameter Name (User Property) <input id="ga4Param" placeholder="ab_test_group" /></label>
-  <label>GA4 Measurement ID <input id="measurementId" placeholder="G-XXXXXXXXXX" /></label>
-  <label>Cookie Duration (days) <input id="cookieDays" type="number" placeholder="30" /></label>
+  
+  <label>Test Name
+    <input id="testName" placeholder="My Homepage Test" />
+  </label>
+  <label>Cookie Name
+    <input id="cookieName" placeholder="ab_test_group" />
+  </label>
+  <label>Element Selector to Hide for Group B
+    <input id="selector" placeholder="#hero-section" />
+  </label>
+  <label>GA4 Parameter Name
+    <input id="ga4Param" placeholder="ab_test_variant" />
+  </label>
+  <label>GA4 Measurement ID
+    <input id="measurementId" placeholder="G-XXXXXXXXXX" />
+  </label>
+  <label>Cookie Duration (days)
+    <input id="cookieDays" type="number" placeholder="30" />
+  </label>
   <button onclick="generateJSON()">Download GTM Container JSON</button>
 
-  <p class="note">This tool generates a full GTM container (.json) that you can import via <strong>Admin → Import Container</strong>. The import will add new tags, a trigger, and a variable to your workspace. Review the imported items before publishing.</p>
+  <p class="note">This tool generates a full GTM container (.json) that you can import via <strong>Admin → Import Container</strong>. The import will add a new tag, trigger, and variable to your workspace. Review the imported items before publishing.</p>
 </body>
 </html>
