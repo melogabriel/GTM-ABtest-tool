@@ -1,192 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-M8VGTNS7');</script>
-<!-- End Google Tag Manager -->
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GTM A/B Test Generator</title>
-  <script>
-    function generateJSON() {
-      // Get all the values from the form
-      const testName = document.getElementById("testName").value || "A/B Test";
-      const cookieName = document.getElementById("cookieName").value || "ab_test_group";
-      const selector = document.getElementById("selector").value || "#rates";
-      const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
-      const measurementId = document.getElementById("measurementId").value.trim();
-      const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-M8VGTNS7');</script>
+    <!-- End Google Tag Manager -->
 
-      // Validation check
-      if (!/^G-[A-Z0-9]{10}$/.test(measurementId)) {
-        alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
-        return;
-      }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      // The A/B testing script that runs on the page
-      const abScript = `(function() {
-  function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    return match ? match[2] : null;
-  }
+    <!-- SEO Meta Tags -->
+    <title>Free GTM A/B Test Generator | Create GTM Containers Easily</title>
+    <meta name="description" content="A free and simple tool to instantly generate a ready-to-import Google Tag Manager (GTM) container for setting up A/B tests. Automate your GTM workflow." />
+    <meta name="keywords" content="GTM, Google Tag Manager, A/B Test, A/B Testing, GTM tool, JSON generator, marketing, analytics, CRO" />
+    <link rel="canonical" href="https://melogabriel.github.io/GTM-ABtest-tool/" />
 
-  function setCookie(name, value, days) {
-    let expires = "";
-    if (days) {
-      const date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      expires = "; expires=" + date.toUTCString();
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://melogabriel.github.io/GTM-ABtest-tool/" />
+    <meta property="og:title" content="Free GTM A/B Test Generator" />
+    <meta property="og:description" content="Instantly generate a ready-to-import GTM container for setting up A/B tests." />
+    <meta property="og:image" content="https://placehold.co/1200x630/2563eb/ffffff?text=GTM+A/B+Test+Tool" />
+
+    <!-- Twitter Meta Tags -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://melogabriel.github.io/GTM-ABtest-tool/" />
+    <meta property="twitter:title" content="Free GTM A/B Test Generator" />
+    <meta property="twitter:description" content="Instantly generate a ready-to-import GTM container for setting up A/B tests." />
+    <meta property="twitter:image" content="https://placehold.co/1200x630/2563eb/ffffff?text=GTM+A/B+Test+Tool" />
+
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://placehold.co/32x32/2563eb/ffffff?text=GTM" type="image/png">
+
+    <script>
+      function generateJSON() {
+        // Get all the values from the form
+        const testName = document.getElementById("testName").value || "A/B Test";
+        const cookieName = document.getElementById("cookieName").value || "ab_test_group";
+        const selector = document.getElementById("selector").value || "#rates";
+        const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
+        const measurementId = document.getElementById("measurementId").value.trim();
+        const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
+
+        // Validation check
+        if (!/^G-[A-Z0-9]{10}$/.test(measurementId)) {
+          alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
+          return;
+        }
+
+        // The A/B testing script that runs on the page
+        const abScript = `(function() {
+    function getCookie(name) {
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      return match ? match[2] : null;
     }
-    document.cookie = name + "=" + value + expires + "; path=/";
-  }
 
-  const name = "${cookieName}";
-  let group = getCookie(name);
-  if (!group) {
-    group = (Math.random() < 0.5) ? "A" : "B";
-    setCookie(name, group, ${cookieDays});
-  }
+    function setCookie(name, value, days) {
+      let expires = "";
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + value + expires + "; path=/";
+    }
 
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ event: "ab_group_set", ab_group: group });
+    const name = "${cookieName}";
+    let group = getCookie(name);
+    if (!group) {
+      group = (Math.random() < 0.5) ? "A" : "B";
+      setCookie(name, group, ${cookieDays});
+    }
 
-  if (group === "B") {
-    const el = document.querySelector("${selector}");
-    if (el) el.style.display = "none";
-  }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ event: "ab_group_set", ab_group: group });
+
+    if (group === "B") {
+      const el = document.querySelector("${selector}");
+      if (el) el.style.display = "none";
+    }
 })();`;
 
-      // Placeholder metadata required by the GTM import schema
-      const placeholderAccountId = "12345678";
-      const placeholderContainerId = "123456";
-      const placeholderFingerprint = "1";
-      const internalTriggerId = "1";
+        // Placeholder metadata required by the GTM import schema
+        const placeholderAccountId = "12345678";
+        const placeholderContainerId = "123456";
+        const placeholderFingerprint = "1";
+        const internalTriggerId = "1";
 
-      const containerJSON = {
-        "exportFormatVersion": 2,
-        "containerVersion": {
-          "accountId": placeholderAccountId,
-          "containerId": placeholderContainerId,
-          "fingerprint": placeholderFingerprint,
-          "container": {
+        const containerJSON = {
+          "exportFormatVersion": 2,
+          "containerVersion": {
             "accountId": placeholderAccountId,
             "containerId": placeholderContainerId,
-            "publicId": "GTM-XXXXXXX",
-            "name": testName
-          },
-          "tag": [
-            {
+            "fingerprint": placeholderFingerprint,
+            "container": {
               "accountId": placeholderAccountId,
               "containerId": placeholderContainerId,
-              "name": `A/B - Script - ${testName}`,
-              "type": "html",
-              "parameter": [
-                { "key": "html", "type": "TEMPLATE", "value": abScript }
-              ],
-              "firingTriggerId": [ internalTriggerId ],
-              "tagFiringOption": "ONCE_PER_LOAD"
+              "publicId": "GTM-XXXXXXX",
+              "name": testName
             },
-            {
-              "accountId": placeholderAccountId,
-              "containerId": placeholderContainerId,
-              "name": `A/B - GA4 Event - ${testName}`,
-              "type": "gaawc",
-              "parameter": [
-                { "key": "eventName", "type": "TEMPLATE", "value": "page_view" },
-                { "key": "measurementId", "type": "TEMPLATE", "value": measurementId },
-                {
-                  "key": "eventParameter",
-                  "type": "LIST",
-                  "list": [
-                    {
-                      "type": "MAP",
-                      "map": [
-                        { "key": "name", "type": "TEMPLATE", "value": ga4Param },
-                        { "key": "value", "type": "TEMPLATE", "value": `{{A/B - Group Variable - ${testName}}}` }
-                      ]
-                    }
-                  ]
-                }
-              ],
-              "firingTriggerId": [ internalTriggerId ]
-            }
-          ],
-          "trigger": [
-            {
-              "accountId": placeholderAccountId,
-              "containerId": placeholderContainerId,
-              "name": "All Pages",
-              "type": "PAGEVIEW",
-              "triggerId": internalTriggerId,
-              "customEventFilter": []
-            }
-          ],
-          "variable": [
-            {
-              "accountId": placeholderAccountId,
-              "containerId": placeholderContainerId,
-              "name": `A/B - Group Variable - ${testName}`,
-              "type": "k",
-              "parameter": [
-                { "key": "name", "type": "TEMPLATE", "value": cookieName }
-              ]
-            }
-          ]
-        }
-      };
+            "tag": [
+              {
+                "accountId": placeholderAccountId,
+                "containerId": placeholderContainerId,
+                "name": `A/B - Script - ${testName}`,
+                "type": "html",
+                "parameter": [
+                  { "key": "html", "type": "TEMPLATE", "value": abScript }
+                ],
+                "firingTriggerId": [ internalTriggerId ],
+                "tagFiringOption": "ONCE_PER_LOAD"
+              },
+              {
+                "accountId": placeholderAccountId,
+                "containerId": placeholderContainerId,
+                "name": `A/B - GA4 Event - ${testName}`,
+                "type": "gaawc",
+                "parameter": [
+                  { "key": "eventName", "type": "TEMPLATE", "value": "page_view" },
+                  { "key": "measurementId", "type": "TEMPLATE", "value": measurementId },
+                  {
+                    "key": "eventParameter",
+                    "type": "LIST",
+                    "list": [
+                      {
+                        "type": "MAP",
+                        "map": [
+                          { "key": "name", "type": "TEMPLATE", "value": ga4Param },
+                          { "key": "value", "type": "TEMPLATE", "value": `{{A/B - Group Variable - ${testName}}}` }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "firingTriggerId": [ internalTriggerId ]
+              }
+            ],
+            "trigger": [
+              {
+                "accountId": placeholderAccountId,
+                "containerId": placeholderContainerId,
+                "name": "All Pages",
+                "type": "PAGEVIEW",
+                "triggerId": internalTriggerId,
+                "customEventFilter": []
+              }
+            ],
+            "variable": [
+              {
+                "accountId": placeholderAccountId,
+                "containerId": placeholderContainerId,
+                "name": `A/B - Group Variable - ${testName}`,
+                "type": "k",
+                "parameter": [
+                  { "key": "name", "type": "TEMPLATE", "value": cookieName }
+                ]
+              }
+            ]
+          }
+        };
 
-      const blob = new Blob([JSON.stringify(containerJSON, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
-      link.click();
-      URL.revokeObjectURL(url);
-    }
-  </script>
-  <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 2rem; max-width: 700px; margin: auto; background: #f9fafb; color: #333; }
-    h1 { font-size: 2rem; margin-bottom: 1rem; }
-    label { display: block; margin-bottom: 1rem; }
-    input { width: 100%; padding: 0.5rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; margin-top: 0.25rem; }
-    button { padding: 0.75rem 1.5rem; font-size: 1rem; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; transition: background 0.3s; }
-    button:hover { background: #1d4ed8; }
-    .note { font-size: 0.875rem; color: #555; margin-top: 1rem; }
-  </style>
+        const blob = new Blob([JSON.stringify(containerJSON, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+    </script>
 </head>
-<body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M8VGTNS7"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-  <h1>GTM A/B Test Generator </h1>
-  <h2>A/B testing with Google Tag Manager: the free and lean solution. </h2>
-  <p>Generate a ready-to-import GTM container JSON for a simple A/B test.</p>
-  
-  <label>Test Name
-    <input id="testName" placeholder="My Homepage Test" />
-  </label>
-  <label>Cookie Name
-    <input id="cookieName" placeholder="ab_test_group" />
-  </label>
-  <label>Element Selector to Hide for Group B
-    <input id="selector" placeholder="#hero-section" />
-  </label>
-  <label>GA4 Parameter Name
-    <input id="ga4Param" placeholder="ab_test_variant" />
-  </label>
-  <label>GA4 Measurement ID
-    <input id="measurementId" placeholder="G-XXXXXXXXXX" />
-  </label>
-  <label>Cookie Duration (days)
-    <input id="cookieDays" type="number" placeholder="30" />
-  </label>
-  <button onclick="generateJSON()">Download GTM Container JSON</button>
+<body class="bg-gray-50 text-gray-800 antialiased">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M8VGTNS7"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
-  <p class="note">This tool generates a full GTM container (.json) that you can import via <strong>Admin → Import Container</strong>. The import will add a new tag, trigger, and variable to your workspace. Review the imported items before publishing.</p>
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <h1 class="text-2xl font-bold text-gray-900">GTM A/B Test Generator</h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Hero Section -->
+            <section class="text-center mb-12">
+                <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
+                    A/B Testing with GTM Made Easy
+                </h2>
+                <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
+                    Automate your A/B test setup. Generate a ready-to-import GTM container in seconds, not hours.
+                </p>
+            </section>
+
+            <!-- Form Card -->
+            <section class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Form Fields -->
+                    <div class="space-y-6">
+                        <div>
+                            <label for="testName" class="block text-sm font-medium text-gray-700">Test Name</label>
+                            <input type="text" id="testName" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Homepage Hero Text Test">
+                        </div>
+                        <div>
+                            <label for="cookieName" class="block text-sm font-medium text-gray-700">Cookie Name</label>
+                            <input type="text" id="cookieName" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="ab_test_group_hero">
+                        </div>
+                        <div>
+                            <label for="selector" class="block text-sm font-medium text-gray-700">Element Selector to Hide (Group B)</label>
+                            <input type="text" id="selector" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="#hero-section .subtitle">
+                        </div>
+                        <div>
+                            <label for="ga4Param" class="block text-sm font-medium text-gray-700">GA4 Parameter Name</label>
+                            <input type="text" id="ga4Param" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="hero_text_variant">
+                        </div>
+                        <div>
+                            <label for="measurementId" class="block text-sm font-medium text-gray-700">GA4 Measurement ID</label>
+                            <input type="text" id="measurementId" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="G-XXXXXXXXXX">
+                        </div>
+                        <div>
+                            <label for="cookieDays" class="block text-sm font-medium text-gray-700">Cookie Duration (days)</label>
+                            <input type="number" id="cookieDays" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="30">
+                        </div>
+                    </div>
+
+                    <!-- Instructions & Button -->
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900">How it Works</h3>
+                            <p class="mt-2 text-sm text-gray-600">
+                                This tool generates a GTM container (`.json`) with all the tags, triggers, and variables needed for a simple A/B test.
+                            </p>
+                            <ul class="mt-4 space-y-2 text-sm text-gray-600 list-disc list-inside">
+                                <li>A script assigns users to Group A or B.</li>
+                                <li>The element you specify is hidden for Group B.</li>
+                                <li>The user's group is sent to GA4 for analysis.</li>
+                            </ul>
+                            <p class="mt-4 text-xs text-gray-500">
+                                After generating, import the file into GTM via Admin → Import Container. Remember to choose the <strong>MERGE</strong> option.
+                            </p>
+                        </div>
+                        <button onclick="generateJSON()" class="mt-6 w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                            Download GTM Container JSON
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-12">
+        <div class="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+            <p>
+                Created by Gabriel Melo. View on 
+                <a href="https://github.com/melogabriel/GTM-ABtest-tool" target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-600 hover:text-indigo-500">GitHub</a>.
+            </p>
+        </div>
+    </footer>
+
 </body>
 </html>
