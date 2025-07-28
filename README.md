@@ -1,5 +1,7 @@
 # GTM A/B Test Generator
 
+A/B testing with Google Tag Manager: The free and lean solution.
+
 A simple [web-based tool](https://melogabriel.github.io/GTM-ABtest-tool/) to instantly generate a ready-to-import Google Tag Manager container (`.json`) for a classic A/B test.
 
 
