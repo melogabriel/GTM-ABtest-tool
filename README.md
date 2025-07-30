@@ -35,6 +35,8 @@ All these components are set to fire on a single "All Pages" trigger.
 
 ## How to Use
 
+![](gtm_abtest.gif)
+
 1.  **Navigate to the Tool:** [**GTM A/B Test Generator**](https://melogabriel.github.io/GTM-ABtest-tool/)
 2.  **Fill in the Fields:**
     * **Test Name:** A descriptive name for your test (e.g., "Homepage Hero Button Test"). This will be used to name the components in GTM.
