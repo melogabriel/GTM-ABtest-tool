@@ -60,7 +60,6 @@
       const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
       return match ? match[2] : null;
     }
-
     function setCookie(name, value, days) {
       let expires = "";
       if (days) {
@@ -70,22 +69,19 @@
       }
       document.cookie = name + "=" + value + expires + "; path=/";
     }
-
     const name = "${cookieName}";
     let group = getCookie(name);
     if (!group) {
       group = (Math.random() < 0.5) ? "A" : "B";
       setCookie(name, group, ${cookieDays});
     }
-
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ event: "ab_group_set", ab_group: group });
-
     if (group === "B") {
       const el = document.querySelector("${selector}");
       if (el) el.style.display = "none";
     }
-})();</script>`;
+})();</scr` + `ipt>`;
 
         // Placeholder metadata required by the GTM import schema
         const placeholderAccountId = "12345678";
