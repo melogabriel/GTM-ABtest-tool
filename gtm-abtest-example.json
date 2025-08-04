@@ -1,0 +1,100 @@
+{
+  "exportFormatVersion": 2,
+  "containerVersion": {
+    "accountId": "12345678",
+    "containerId": "123456",
+    "fingerprint": "1",
+    "container": {
+      "accountId": "12345678",
+      "containerId": "123456",
+      "publicId": "GTM-XXXXXXX",
+      "name": "test"
+    },
+    "tag": [
+      {
+        "accountId": "12345678",
+        "containerId": "123456",
+        "name": "A/B - Script - test",
+        "type": "html",
+        "parameter": [
+          {
+            "key": "html",
+            "type": "TEMPLATE",
+            "value": "<script>(function() {\n    function getCookie(name) {\n      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));\n      return match ? match[2] : null;\n    }\n    function setCookie(name, value, days) {\n      let expires = \"\";\n      if (days) {\n        const date = new Date();\n        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));\n        expires = \"; expires=\" + date.toUTCString();\n      }\n      document.cookie = name + \"=\" + value + expires + \"; path=/\";\n    }\n    const name = \"test\";\n    let group = getCookie(name);\n    if (!group) {\n      group = (Math.random() < 0.5) ? \"A\" : \"B\";\n      setCookie(name, group, 30);\n    }\n    window.dataLayer = window.dataLayer || [];\n    window.dataLayer.push({ event: \"ab_group_set\", ab_group: group });\n    if (group === \"B\") {\n      const el = document.querySelector(\"test\");\n      if (el) el.style.display = \"none\";\n    }\n})();</script>"
+          }
+        ],
+        "firingTriggerId": [
+          "1"
+        ],
+        "tagFiringOption": "ONCE_PER_LOAD"
+      },
+      {
+        "accountId": "12345678",
+        "containerId": "123456",
+        "name": "A/B - GA4 Event - test",
+        "type": "gaawc",
+        "parameter": [
+          {
+            "key": "eventName",
+            "type": "TEMPLATE",
+            "value": "page_view"
+          },
+          {
+            "key": "measurementId",
+            "type": "TEMPLATE",
+            "value": "G-9999999999"
+          },
+          {
+            "key": "eventParameter",
+            "type": "LIST",
+            "list": [
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "key": "name",
+                    "type": "TEMPLATE",
+                    "value": "test"
+                  },
+                  {
+                    "key": "value",
+                    "type": "TEMPLATE",
+                    "value": "{{A/B - Group Variable - test}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "firingTriggerId": [
+          "1"
+        ]
+      }
+    ],
+    "trigger": [
+      {
+        "accountId": "12345678",
+        "containerId": "123456",
+        "name": "All Pages",
+        "type": "PAGEVIEW",
+        "triggerId": "1",
+        "customEventFilter": []
+      }
+    ],
+    "variable": [
+      {
+        "accountId": "12345678",
+        "containerId": "123456",
+        "name": "A/B - Group Variable - test",
+        "type": "k",
+        "parameter": [
+          {
+            "key": "name",
+            "type": "TEMPLATE",
+            "value": "test"
+          }
+        ]
+      }
+    ]
+  }
+}
