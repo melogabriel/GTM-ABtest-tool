@@ -45,7 +45,19 @@
           alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
           return;
         }
+        
+        // Create a predictable filename
+        const fileName = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
 
+        // Push a custom event to the dataLayer for GTM to capture
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'json_download',
+          file_name: fileName,
+          file_extension: 'json',
+          link_text: 'Download GTM Container JSON'
+        });
+          
         // The A/B testing script that runs on the page
         const abScript = `<script>(function() {
     function getCookie(name) {
