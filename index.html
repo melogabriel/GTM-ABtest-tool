@@ -54,296 +54,78 @@
 
     <script>
       function generateJSON() {
-        // Get all the values from the form
-        const testName = document.getElementById("testName").value || "A/B Test";
-        const cookieName = document.getElementById("cookieName").value || "ab_test_group";
-        const selector = document.getElementById("selector").value || "#rates";
-        const ga4Param = document.getElementById("ga4Param").value || "ab_test_group";
-        const measurementId = document.getElementById("measurementId").value.trim();
-        const cookieDays = parseInt(document.getElementById("cookieDays").value) || 30;
-
-        // Validation check
-        if (!/^G-[A-Z0-9]{10}$/.test(measurementId)) {
-          alert("Please enter a valid GA4 Measurement ID (e.g., G-XXXXXXXXXX)");
-          return;
-        }
+        // ... (all the code inside generateJSON)
         
-        // Create a predictable filename
-        const fileName = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
-
-        // Push a custom event to the dataLayer for GTM to capture
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'json_download',
-          file_name: fileName,
-          file_extension: 'json',
-          link_text: 'Download GTM Container JSON'
-        });
-          
-        // The A/B testing script that runs on the page
-        const abScript = `<script>(function() {
-    function getCookie(name) {
-      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      return match ? match[2] : null;
-    }
-    function setCookie(name, value, days) {
-      let expires = "";
-      if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-      }
-      document.cookie = name + "=" + value + expires + "; path=/";
-    }
-    const name = "${cookieName}";
-    let group = getCookie(name);
-    if (!group) {
-      group = (Math.random() < 0.5) ? "A" : "B";
-      setCookie(name, group, ${cookieDays});
-    }
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: "ab_group_set", ab_group: group });
-    if (group === "B") {
-      const el = document.querySelector("${selector}");
-      if (el) el.style.display = "none";
-    }
-})();</scr` + `ipt>`;
-
-        // Placeholder metadata required by the GTM import schema
-        const placeholderAccountId = "12345678";
-        const placeholderContainerId = "123456";
-        const placeholderFingerprint = "1";
-        const internalTriggerId = "1";
-
-        const containerJSON = {
-          "exportFormatVersion": 2,
-          "containerVersion": {
-            "accountId": placeholderAccountId,
-            "containerId": placeholderContainerId,
-            "fingerprint": placeholderFingerprint,
-            "container": {
-              "accountId": placeholderAccountId,
-              "containerId": placeholderContainerId,
-              "publicId": "GTM-XXXXXXX",
-              "name": testName
-            },
-            "tag": [
-              {
-                "accountId": placeholderAccountId,
-                "containerId": placeholderContainerId,
-                "name": `A/B - Script - ${testName}`,
-                "type": "html",
-                "parameter": [
-                  { "key": "html", "type": "TEMPLATE", "value": abScript }
-                ],
-                "firingTriggerId": [ internalTriggerId ],
-                "tagFiringOption": "ONCE_PER_LOAD"
-              },
-              {
-                "accountId": placeholderAccountId,
-                "containerId": placeholderContainerId,
-                "name": `A/B - GA4 Event - ${testName}`,
-                "type": "gaawc",
-                "parameter": [
-                  { "key": "eventName", "type": "TEMPLATE", "value": "page_view" },
-                  { "key": "measurementId", "type": "TEMPLATE", "value": measurementId },
-                  {
-                    "key": "eventParameter",
-                    "type": "LIST",
-                    "list": [
-                      {
-                        "type": "MAP",
-                        "map": [
-                          { "key": "name", "type": "TEMPLATE", "value": ga4Param },
-                          { "key": "value", "type": "TEMPLATE", "value": `{{A/B - Group Variable - ${testName}}}` }
-                        ]
-                      }
-                    ]
-                  }
-                ],
-                "firingTriggerId": [ internalTriggerId ]
-              }
-            ],
-            "trigger": [
-              {
-                "accountId": placeholderAccountId,
-                "containerId": placeholderContainerId,
-                "name": "All Pages",
-                "type": "PAGEVIEW",
-                "triggerId": internalTriggerId,
-                "customEventFilter": []
-              }
-            ],
-            "variable": [
-              {
-                "accountId": placeholderAccountId,
-                "containerId": placeholderContainerId,
-                "name": `A/B - Group Variable - ${testName}`,
-                "type": "k",
-                "parameter": [
-                  { "key": "name", "type": "TEMPLATE", "value": cookieName }
-                ]
-              }
-            ]
-          }
-        };
-
-        const blob = new Blob([JSON.stringify(containerJSON, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `gtm-abtest-${testName.replace(/\s+/g, "-").toLowerCase()}.json`;
+        // At the very end of the function:
         link.click();
         URL.revokeObjectURL(url);
+        showSharePopup();
       }
 
       function copyLink() {
-        const urlToCopy = 'https://melogabriel.github.io/GTM-ABtest-tool/';
-        navigator.clipboard.writeText(urlToCopy).then(() => {
-          // Provide feedback to the user
-          const copyButton = document.getElementById('copyLinkButton');
-          const originalContent = copyButton.innerHTML;
-          copyButton.innerHTML = '<span class="text-sm font-medium text-indigo-600">Copied!</span>';
-          setTimeout(() => {
-            copyButton.innerHTML = originalContent;
-          }, 2000);
-        }).catch(err => {
-          console.error('Failed to copy text: ', err);
-          alert('Failed to copy link.');
-        });
+        // ... (copyLink function)
       }
+
+      // --- START: New Popup Functions ---
+      const handleEscape = (event) => {
+        if (event.key === 'Escape') {
+          hideSharePopup();
+        }
+      };
+
+      function showSharePopup() {
+        const popup = document.getElementById('sharePopup');
+        const panel = document.getElementById('sharePopupPanel');
+        popup.classList.remove('hidden');
+        // A tiny delay is needed for the browser to apply the opacity transition
+        setTimeout(() => {
+          popup.classList.remove('opacity-0');
+          panel.classList.remove('scale-95');
+        }, 10);
+        document.addEventListener('keydown', handleEscape);
+      }
+
+      function hideSharePopup() {
+        const popup = document.getElementById('sharePopup');
+        const panel = document.getElementById('sharePopupPanel');
+        popup.classList.add('opacity-0');
+        panel.classList.add('scale-95');
+        // Wait for the transition to finish before hiding the element
+        setTimeout(() => {
+          popup.classList.add('hidden');
+        }, 300); // Must match the duration in the HTML (duration-300)
+        document.removeEventListener('keydown', handleEscape);
+      }
+      // --- END: New Popup Functions ---
     </script>
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M8VGTNS7"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    
-    <header class="bg-white shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-2xl font-bold text-gray-900">A/B Testing with GTM Made Easy</h1>
-        </div>
-    </header>
-
-    <main class="py-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div id="sharePopup" onclick="hideSharePopup()" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300 ease-in-out opacity-0">
+        <div id="sharePopupPanel" onclick="event.stopPropagation()" class="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 transform transition-all duration-300 ease-in-out scale-95 relative">
+            <button onclick="hideSharePopup()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close popup">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
             
-            <section class="text-center mb-12">
-                <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-                    GTM A/B Test Generator
-                </h2>
-                <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-500">
-                    Automate your A/B test setup. Generate a ready-to-import GTM container in seconds, not hours.
+            <div class="text-center">
+                <h3 class="text-2xl font-bold text-gray-900">Thanks for using the tool!</h3>
+                <p class="mt-2 text-gray-600">
+                    If you found this useful, please consider sharing it with your network.
                 </p>
-            </section>
-
-            <section class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    
-                    <div class="space-y-6">
-                        <div>
-                            <label for="testName" class="block text-sm font-medium text-gray-700">Test Name</label>
-                            <input type="text" id="testName" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Homepage Hero Text Test">
-                        </div>
-                        <div>
-                            <label for="cookieName" class="block text-sm font-medium text-gray-700">Cookie Name</label>
-                            <input type="text" id="cookieName" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="ab_test_group_hero">
-                        </div>
-                        <div>
-                            <label for="selector" class="block text-sm font-medium text-gray-700">Element Selector to Hide (Group B)</label>
-                            <input type="text" id="selector" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="#hero-section .subtitle">
-                        </div>
-                        <div>
-                            <label for="ga4Param" class="block text-sm font-medium text-gray-700">GA4 Parameter Name</label>
-                            <input type="text" id="ga4Param" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="hero_text_variant">
-                        </div>
-                        <div>
-                            <label for="measurementId" class="block text-sm font-medium text-gray-700">GA4 Measurement ID</label>
-                            <input type="text" id="measurementId" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="G-XXXXXXXXXX">
-                        </div>
-                        <div>
-                            <label for="cookieDays" class="block text-sm font-medium text-gray-700">Cookie Duration (days)</label>
-                            <input type="number" id="cookieDays" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="30">
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 flex flex-col justify-between">
-                        <div>
-                            <h3 class="text-lg font-medium text-gray-900">How it Works</h3>
-                            <p class="mt-2 text-sm text-gray-600">
-                                This tool generates a GTM container (`.json`) with all the tags, triggers, and variables needed for a simple A/B test.
-                            </p>
-                            <ul class="mt-4 space-y-2 text-sm text-gray-600 list-disc list-inside">
-                                <li>A script assigns users to Group A or B.</li>
-                                <li>The element you specify is hidden for Group B.</li>
-                                <li>The user's group is sent to GA4 for analysis.</li>
-                            </ul>
-                            <p class="mt-4 text-xs text-gray-500">
-                                After generating, import the file into GTM via Admin → Import Container. Remember to choose the <strong>MERGE</strong> option.
-                            </p>
-                        </div>
-                        <button onclick="generateJSON()" class="mt-6 w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-                            Download GTM Container JSON
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-           <section class="mt-12 text-center">
-               <h3 class="text-2xl font-bold text-gray-900">See It in Action</h3>
-               <p class="mt-2 max-w-2xl mx-auto text-lg text-gray-500">
-                   Watch this short GIF to see how to generate and import your container.
-               </p>
-               <div class="mt-6 bg-white p-4 rounded-2xl shadow-lg border border-gray-200 inline-block">
-                   <img src="https://github.com/melogabriel/GTM-ABtest-tool/blob/main/gtm_abtest.gif?raw=true" alt="GTM A/B Test Tool Usage Demonstration" class="rounded-lg">
-               </div>
-           </section>
-
-           <section class="mt-16 text-center">
-               <h3 class="text-2xl font-bold text-gray-900">Share This Tool</h3>
-               <p class="mt-2 max-w-2xl mx-auto text-lg text-gray-500">
-                   If you find this tool useful, please share it with others!
-               </p>
-               <div class="mt-6 flex justify-center items-center flex-wrap gap-x-6 gap-y-4">
-                   <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F&text=Check%20out%20this%20free%20GTM%20A%2FB%20Test%20Generator%20for%20automating%20A%2FB%20test%20setups%20in%20Google%20Tag%20Manager!" target="_blank" rel="noopener noreferrer" aria-label="Share on X" class="text-gray-500 hover:text-black transition-colors">
+                <div class="mt-6 flex justify-center items-center flex-wrap gap-x-6 gap-y-4">
+                    <a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F&text=Check%20out%20this%20free%20GTM%20A%2FB%20Test%20Generator%20for%20automating%20A%2FB%20test%20setups%20in%20Google%20Tag%20Manager!" target="_blank" rel="noopener noreferrer" aria-label="Share on X" class="text-gray-500 hover:text-black transition-colors">
                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                   </a>
-                   <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F&title=Free%20GTM%20A%2FB%20Test%20Generator&summary=A%20free%20and%20simple%20tool%20to%20instantly%20generate%20a%20ready-to-import%20Google%20Tag%20Manager%20(GTM)%20container%20for%20setting%20up%20A%2FB%20tests." target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn" class="text-gray-500 hover:text-[#0077B5] transition-colors">
+                    </a>
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F&title=Free%20GTM%20A%2FB%20Test%20Generator&summary=A%20free%20and%20simple%20tool%20to%20instantly%20generate%20a%20ready-to-import%20Google%20Tag%20Manager%20(GTM)%20container%20for%20setting%20up%20A%2FB%20tests." target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn" class="text-gray-500 hover:text-[#0077B5] transition-colors">
                        <svg class="w-7 h-7" fill="currentColor" stroke="currentColor" stroke-width="0" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"></path></svg>
-                   </a>
-                   <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" class="text-gray-500 hover:text-[#1877F2] transition-colors">
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" class="text-gray-500 hover:text-[#1877F2] transition-colors">
                        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"></path></svg>
-                   </a>
-                   <a href="https://api.whatsapp.com/send?text=Check%20out%20this%20free%20GTM%20A%2FB%20Test%20Generator%3A%20https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" class="text-gray-500 hover:text-[#25D366] transition-colors">
-                       <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.894 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.886-.001 2.269.654 4.341 1.905 6.03l-.358 1.299 1.345-.352z"></path></svg>
-                   </a>
-                   <a href="https://t.me/share/url?url=https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F&text=Check%20out%20this%20free%20GTM%20A%2FB%20Test%20Generator" target="_blank" rel="noopener noreferrer" aria-label="Share on Telegram" class="text-gray-500 hover:text-[#26A5E4] transition-colors">
-                       <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.393 8.232l-1.948 9.172c-.205.966-.798 1.206-1.628.752l-2.982-2.193-1.445-1.393-2.986 2.24c-1.147.781-1.972.373-2.28-.962l-1.588-7.487c-.354-1.488.844-2.193 2.025-1.742l11.45 4.423c1.23.473 1.225 1.183.214 1.527z"></path></svg>
-                   </a>
-                   <a href="mailto:?subject=Check%20out%20this%20GTM%20A%2FB%20Test%20Generator&body=I%20found%20this%20free%20tool%20that%20makes%20it%20easy%20to%20set%20up%20A%2FB%20tests%20in%20Google%20Tag%20Manager%3A%20https%3A%2F%2Fmelogabriel.github.io%2FGTM-ABtest-tool%2F" aria-label="Share via Email" class="text-gray-500 hover:text-indigo-600 transition-colors">
-                       <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
-                   </a>
-                   <button id="copyLinkButton" onclick="copyLink()" type="button" aria-label="Copy link to clipboard" class="text-gray-500 hover:text-indigo-600 transition-colors h-7 w-7 flex items-center justify-center">
-                       <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
-                   </button>
-               </div>
-           </section>
-
+                    </a>
+                </div>
+                <button onclick="hideSharePopup()" class="mt-8 text-sm text-gray-500 hover:text-gray-800">No, thanks</button>
+            </div>
         </div>
-    </main>
-
-    <footer class="bg-white mt-12">
-        <div class="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-            <p>
-                Created by Gabriel Melo. View on 
-                <a href="https://github.com/melogabriel/GTM-ABtest-tool" target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-600 hover:text-indigo-500">GitHub</a>.
-            </p>
-            <p class="mt-2">
-                <a href="https://github.com/melogabriel/GTM-ABtest-tool/issues" target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-600 hover:text-indigo-500">Report an Issue</a>
-                <span class="mx-2 text-gray-400">|</span>
-                <a href="https://github.com/melogabriel/GTM-ABtest-tool/pulls" target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-600 hover:text-indigo-500">Submit a Pull Request</a>
-            </p>
-        </div>
-    </footer>
+    </div>
 
 </body>
 </html>
