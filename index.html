@@ -29,22 +29,91 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "GTM A/B Test Generator",
-      "description": "A free and simple tool to instantly generate a ready-to-import Google Tag Manager (GTM) container for setting up A/B tests and automating GTM workflows.",
-      "url": "https://melogabriel.github.io/GTM-ABtest-tool/",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Any",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "creator": {
-        "@type": "Person",
-        "name": "Gabriel Melo",
-        "url": "https://github.com/melogabriel"
-      }
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "name": "GTM A/B Test Generator",
+          "description": "A free tool to instantly generate a Google Tag Manager (GTM) container for setting up A/B tests and automating GTM workflows.",
+          "url": "https://melogabriel.github.io/GTM-ABtest-tool/",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Any",
+          "offers": {
+            "@type": "Offer",
+            "price": "0"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What does this tool do?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "This tool automatically generates a ready-to-import JSON file for Google Tag Manager (GTM). This file contains all the necessary tags, triggers, and variables to run a simple A/B test, such as hiding an element for a percentage of your users."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why should I use this instead of a dedicated A/B testing platform?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "For simple tests, a full platform can be overkill. This tool uses the power of GTM, which you likely already have on your site. It's free, lightweight, and avoids adding extra third-party scripts that can slow down your page."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I analyze the results of the A/B test?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The generated GTM container sends the user's group ('A' or 'B') as a parameter to Google Analytics 4 (GA4). You can then create comparisons or segments in your GA4 reports to see how conversion rates and other metrics differ between the two groups."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is this tool a replacement for platforms like VWO or Optimizely?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Not entirely. This tool is a lightweight alternative for simple A/B tests. Dedicated platforms like VWO offer advanced features like visual editors, detailed statistical modeling, and personalization engines that are better suited for complex, large-scale optimization programs."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does this tool handle the 'flicker effect'?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The flicker effect happens when original content loads before the A/B test variation appears. Because this tool uses a script deployed via Google Tag Manager that fires quickly, the effect is minimized for simple tests like hiding an element. The user is unlikely to perceive any flicker."
+              }
+            }
+          ]
+        },
+        {
+          "@type": "HowTo",
+          "name": "How to set up a GTM A/B Test with the Generator",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Fill in the form",
+              "text": "Enter your test details, including the Test Name, the CSS selector of the element you want to hide for Group B, and your GA4 Measurement ID."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Download the Container",
+              "text": "Click the 'Download GTM Container JSON' button to generate and download your customized file."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Import into GTM",
+              "text": "In the Google Tag Manager admin panel, go to 'Import Container'. Select the downloaded JSON file and choose to 'Merge' it with your existing workspace."
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Preview and Publish",
+              "text": "Use GTM's Preview mode to ensure the test is working correctly. Once confirmed, publish the container to set your A/B test live."
+            }
+          ]
+        }
+      ]
     }
     </script>
 
@@ -320,6 +389,55 @@
                 </div>
             </section>
 
+           <section class="mt-12 max-w-4xl mx-auto">
+               <h3 class="text-2xl font-bold text-center text-gray-900">Why Use This GTM-Based Approach?</h3>
+               <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div class="bg-white p-6 rounded-lg border border-gray-200">
+                       <h4 class="font-semibold text-gray-800">The Benefits</h4>
+                       <ul class="mt-2 text-gray-600 space-y-2 list-disc list-inside">
+                           <li><strong>No Extra Cost:</strong> Leverages the tools you already use (GTM and GA4) without expensive platform fees.</li>
+                           <li><strong>Site Speed:</strong> Avoids adding heavy third-party A/B testing scripts that can slow down your website.</li>
+                           <li><strong>A Post-Google Optimize Solution:</strong> With Google Optimize now deprecated, this tool provides a free, straightforward alternative for running simple experiments.</li>
+                           <li><strong>Empowerment:</strong> Allows marketers and analysts to launch simple tests without needing developer resources.</li>
+                       </ul>
+                   </div>
+                   <div class="bg-white p-6 rounded-lg border border-gray-200">
+                       <h4 class="font-semibold text-gray-800">Our Approach to Limitations</h4>
+                       <ul class="mt-2 text-gray-600 space-y-2 list-disc list-inside">
+                           <li><strong>The "Flicker Effect":</strong> Our script is designed to run very early, minimizing the flicker for simple changes like hiding an element. However, for complex visual edits, dedicated platforms may still be superior.</li>
+                           <li><strong>Test Complexity:</strong> This tool is perfect for straightforward tests (e.g., hiding an element, changing button text via a GTM variable). For multi-element or dynamic content tests, a full-featured platform is recommended.</li>
+                           <li><strong>Data Analysis:</strong> This tool focuses on test deployment. The crucial analysis of results and statistical significance is performed within Google Analytics 4, which our setup fully supports.</li>
+                       </ul>
+                   </div>
+               </div>
+           </section>
+
+           <section class="mt-12 max-w-4xl mx-auto">
+               <h3 class="text-2xl font-bold text-center text-gray-900">Frequently Asked Questions</h3>
+               <div class="mt-6 space-y-6">
+                   <div class="bg-white p-6 rounded-lg border border-gray-200">
+                       <h4 class="font-semibold text-gray-800">What does this tool do?</h4>
+                       <p class="mt-2 text-gray-600">This tool automatically generates a ready-to-import JSON file for Google Tag Manager (GTM). This file contains all the necessary tags, triggers, and variables to run a simple A/B test, such as hiding an element for a percentage of your users.</p>
+                   </div>
+                   <div class="bg-white p-6 rounded-lg border border-gray-200">
+                       <h4 class="font-semibold text-gray-800">Why should I use this instead of a dedicated A/B testing platform?</h4>
+                       <p class="mt-2 text-gray-600">For simple tests (like changing a headline or hiding an element), a full platform can be overkill. This tool uses the power of GTM, which you likely already have on your site. It's free, lightweight, and avoids adding extra third-party scripts that can slow down your page.</p>
+                   </div>
+                   <div class="bg-white p-6 rounded-lg border border-gray-200">
+                       <h4 class="font-semibold text-gray-800">How do I analyze the results of the A/B test?</h4>
+                       <p class="mt-2 text-gray-600">The generated GTM container sends the user's group ("A" or "B") as a parameter to Google Analytics 4 (GA4). You can then create comparisons or segments in your GA4 reports to see how conversion rates and other metrics differ between the two groups.</p>
+                   </div>
+                   <div class="bg-white p-6 rounded-lg border border-gray-200">
+                        <h4 class="font-semibold text-gray-800">Is this tool a replacement for platforms like VWO or Optimizely?</h4>
+                        <p class="mt-2 text-gray-600">Not entirely. This tool is a lightweight alternative for simple A/B tests. Dedicated platforms like VWO offer advanced features like visual editors, detailed statistical modeling, and personalization engines that are better suited for complex, large-scale optimization programs.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-gray-200">
+                        <h4 class="font-semibold text-gray-800">How does this tool handle the 'flicker effect'?</h4>
+                        <p class="mt-2 text-gray-600">The flicker effect happens when original content loads before the A/B test variation appears. Because this tool uses a script deployed via Google Tag Manager that fires quickly, the effect is minimized for simple tests like hiding an element. The user is unlikely to perceive any flicker.</p>
+                    </div>
+               </div>
+           </section>
+
            <section class="mt-12 text-center">
                <h3 class="text-2xl font-bold text-gray-900">See It in Action</h3>
                <p class="mt-2 max-w-2xl mx-auto text-lg text-gray-500">
@@ -359,7 +477,6 @@
                    </button>
                </div>
            </section>
-
         </div>
     </main>
 
@@ -403,5 +520,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>
