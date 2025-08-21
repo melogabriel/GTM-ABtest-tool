@@ -116,6 +116,12 @@
       ]
     }
     </script>
+    
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -319,13 +325,21 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M8VGTNS7"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
-    <header class="bg-white shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <h1 class="text-2xl font-bold text-gray-900">A/B Testing with GTM Made Easy</h1>
-        </div>
+    <header class="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+        <nav class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <a href="#" class="text-xl font-bold text-gray-900">GTM A/B Test Generator</a>
+            
+            <ul class="flex items-center space-x-6">
+                <li><a href="#tool-section" class="font-medium text-gray-500 hover:text-indigo-600 transition-colors">Generator</a></li>
+                <li><a href="#benefits-section" class="font-medium text-gray-500 hover:text-indigo-600 transition-colors">Benefits</a></li>
+                <li><a href="#faq-section" class="font-medium text-gray-500 hover:text-indigo-600 transition-colors">FAQ</a></li>
+                <li><a href="#gif-section" class="font-medium text-gray-500 hover:text-indigo-600 transition-colors">Demo</a></li>
+                <li><a href="#share-section" class="font-medium text-gray-500 hover:text-indigo-600 transition-colors">Share</a></li>
+            </ul>
+        </nav>
     </header>
 
-    <main class="py-10">
+    <main class="py-10 pt-20">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <section class="text-center mb-12">
@@ -337,7 +351,7 @@
                 </p>
             </section>
 
-            <section class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
+            <section id="tool-section" class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     
                     <div class="space-y-6">
@@ -389,7 +403,7 @@
                 </div>
             </section>
 
-           <section class="mt-12 max-w-4xl mx-auto">
+           <section id="benefits-section" class="mt-12 max-w-4xl mx-auto">
                <h3 class="text-2xl font-bold text-center text-gray-900">Why Use This GTM-Based Approach?</h3>
                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div class="bg-white p-6 rounded-lg border border-gray-200">
@@ -412,7 +426,7 @@
                </div>
            </section>
 
-           <section class="mt-12 max-w-4xl mx-auto">
+           <section id="faq-section" class="mt-12 max-w-4xl mx-auto">
                <h3 class="text-2xl font-bold text-center text-gray-900">Frequently Asked Questions</h3>
                <div class="mt-6 space-y-6">
                    <div class="bg-white p-6 rounded-lg border border-gray-200">
@@ -438,7 +452,7 @@
                </div>
            </section>
 
-           <section class="mt-12 text-center">
+           <section id="gif-section" class="mt-12 text-center">
                <h3 class="text-2xl font-bold text-gray-900">See It in Action</h3>
                <p class="mt-2 max-w-2xl mx-auto text-lg text-gray-500">
                    Watch this short GIF to see how to generate and import your container.
@@ -448,7 +462,7 @@
                </div>
            </section>
 
-           <section class="mt-16 text-center">
+           <section id="share-section" class="mt-16 text-center">
                <h3 class="text-2xl font-bold text-gray-900">Share This Tool</h3>
                <p class="mt-2 max-w-2xl mx-auto text-lg text-gray-500">
                    If you find this tool useful, please share it with others!
@@ -520,6 +534,5 @@
             </div>
         </div>
     </div>
-
 </body>
 </html>
